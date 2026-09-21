@@ -1,0 +1,14 @@
+# Local app data (database, images, backups, logs) — never commit patient data
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
