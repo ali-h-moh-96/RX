@@ -540,4 +540,16 @@ class SearchMixin:
         self.s_category.set("Any")
         self.s_date_from.delete(0, "end")
         self.s_date_to.delete(0, "end")
+
+        if hasattr(self, "s_or_mode"):
+            self.s_or_mode.set(False)
+
+        if hasattr(self, "_selected_card") and self._selected_card is not None:
+            try:
+                self._selected_card.configure(border_color=DEFAULT_BORDER)
+            except Exception:
+                pass
+        self._selected_card = None
+        self.selected_search_id = None
+        self._clear_snapshot()
         self._refresh_search()
