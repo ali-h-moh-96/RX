@@ -11,7 +11,7 @@ from tkinter import filedialog, messagebox
 from datetime import datetime
 
 from ..config import (BG, CARD, TEXT, MUTED, BORDER, ACCENT, GENDERS,
-                       IMAGES_DIR, LOGGER, BASE_DIR, MAX_AGE)
+                       IMAGES_DIR, LOGGER, DATA_DIR, MAX_AGE)
 from ..db import connect
 from ..utils import safe_path, valid_date, valid_age, save_compressed_image, levenshtein
 from ..widgets.autocomplete_entry import AutocompleteEntry
@@ -334,7 +334,7 @@ class FormMixin:
                 new_name = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:8]}.jpg"
                 new_image = os.path.join(IMAGES_DIR, new_name)
                 save_compressed_image(image_source, new_image)
-                image_rel = os.path.relpath(new_image, BASE_DIR)
+                image_rel = os.path.relpath(new_image, DATA_DIR)
 
             # 2) Database work (creates its own connection → thread-safe).
             now = datetime.now().isoformat()

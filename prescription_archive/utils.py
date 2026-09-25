@@ -6,7 +6,7 @@ from datetime import datetime
 
 from PIL import Image, ImageOps
 
-from .config import BASE_DIR, MAX_IMAGE_SIDE, JPEG_QUALITY, MAX_AGE
+from .config import DATA_DIR, MAX_IMAGE_SIDE, JPEG_QUALITY, MAX_AGE
 
 try:
     RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
@@ -51,7 +51,7 @@ def levenshtein(a, b):
 def safe_path(relative):
     if not relative:
         return None
-    base = Path(BASE_DIR).resolve()
+    base = Path(DATA_DIR).resolve()
     target = (base / relative).resolve()
     try:
         target.relative_to(base)

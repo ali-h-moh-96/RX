@@ -12,7 +12,7 @@ from datetime import datetime
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, simpledialog
 
-from ..config import (CARD, TEXT, MUTED, BORDER, BASE_DIR, DB_PATH,
+from ..config import (CARD, TEXT, MUTED, BORDER, DATA_DIR, DB_PATH,
                        BACKUPS_DIR, IMAGES_DIR, LOGS_DIR, AUTO_BACKUP_KEEP, LOGGER,
                        APP_VERSION, SCHEMA_VERSION, PROTECTED_CATEGORY)
 from ..db import connect, integrity_check, checkpoint_wal, init_db
@@ -175,7 +175,8 @@ class ToolsMixin:
                 for root, _, files in os.walk(IMAGES_DIR):
                     for f in files:
                         z.write(os.path.join(root, f),
-                                os.path.relpath(os.path.join(root, f), BASE_DIR))
+                                os.path.join("data", os.path.relpath(
+                                    os.path.join(root, f), DATA_DIR)))
             if auto:
                 self._prune_backups()
             else:
