@@ -14,7 +14,7 @@ from tkinter import filedialog, messagebox, simpledialog
 
 from ..config import (CARD, TEXT, MUTED, BORDER, BASE_DIR, DB_PATH,
                        BACKUPS_DIR, IMAGES_DIR, LOGS_DIR, AUTO_BACKUP_KEEP, LOGGER,
-                       APP_VERSION, SCHEMA_VERSION)
+                       APP_VERSION, SCHEMA_VERSION, PROTECTED_CATEGORY)
 from ..db import connect, integrity_check, checkpoint_wal, init_db
 from ..utils import safe_path
 
@@ -96,6 +96,11 @@ class ToolsMixin:
             entry.delete(0, "end"); reload(); self._refresh_categories()
 
         def rename(old):
+            if old == PROTECTED_CATEGORY:
+                messagebox.showinfo("Protected",
+                    f"'{PROTECTED_CATEGORY}' is the fallback category and can't be renamed.",
+                    parent=win)
+                return
             new = simpledialog.askstring("Rename", f"Rename '{old}' to:", parent=win)
             if not new or not new.strip(): return
             with connect() as conn:
@@ -105,12 +110,20 @@ class ToolsMixin:
             reload(); self._refresh_categories()
 
         def delete(name):
+            if name == PROTECTED_CATEGORY:
+                messagebox.showinfo("Protected",
+                    f"'{PROTECTED_CATEGORY}' is the fallback category used whenever a "
+                    "prescription's category is deleted, so it can't be deleted itself.",
+                    parent=win)
+                return
             if not messagebox.askyesno("Confirm", f"Delete category '{name}'?", parent=win):
                 return
             with connect() as conn:
+                conn.execute("INSERT OR IGNORE INTO categories(name) VALUES(?)",
+                             (PROTECTED_CATEGORY,))
                 conn.execute("DELETE FROM categories WHERE name=?", (name,))
-                conn.execute("UPDATE prescriptions SET category='General' WHERE category=?",
-                             (name,))
+                conn.execute("UPDATE prescriptions SET category=? WHERE category=?",
+                             (PROTECTED_CATEGORY, name))
             reload(); self._refresh_categories()
 
         ctk.CTkButton(win, text="Add Category", height=40,
