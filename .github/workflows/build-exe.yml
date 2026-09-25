@@ -25,7 +25,7 @@ jobs:
 
       - name: Build the exe
         run: |
-          pyinstaller --noconsole --onefile --collect-all customtkinter --name PrescriptionArchive run.py
+          pyinstaller --noconsole --onefile --collect-all customtkinter --icon=assets/prescription-archive.ico --name PrescriptionArchive run.py
 
       - name: Upload the exe as a downloadable artifact
         uses: actions/upload-artifact@v4
