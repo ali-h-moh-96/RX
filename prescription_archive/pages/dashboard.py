@@ -43,7 +43,9 @@ class DashboardMixin:
     def _refresh_dashboard(self):
         with connect() as conn:
             total = conn.execute("SELECT COUNT(*) FROM prescriptions WHERE deleted_at IS NULL").fetchone()[0]
-            meds = conn.execute("SELECT COUNT(*) FROM medications").fetchone()[0]
+            meds = conn.execute("""SELECT COUNT(DISTINCT pi.medication_id) FROM prescription_items pi
+                JOIN prescriptions p ON p.id = pi.prescription_id
+                WHERE p.deleted_at IS NULL""").fetchone()[0]
             trash = conn.execute("SELECT COUNT(*) FROM prescriptions WHERE deleted_at IS NOT NULL").fetchone()[0]
             month = datetime.now().replace(day=1).strftime("%Y-%m-%d")
             month_count = conn.execute("SELECT COUNT(*) FROM prescriptions WHERE deleted_at IS NULL AND date >= ?", (month,)).fetchone()[0]
